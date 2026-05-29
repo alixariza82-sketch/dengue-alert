@@ -1,986 +1,297 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="DengueAlert — Mapa interactivo de riesgo de dengue en Barranquilla">
-  <title>DengueAlert — Mapa de Riesgo</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦟</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-/* =============================================
-   DengueAlert — Global Styles
-   Variables, reset, nav, sidebar, shared utils
-   ============================================= */
 
-/* Google Fonts */
-
-/* ---- Variables ---- */
-:root {
-  --turquesa:       #19B5A5;
-  --azul:           #145DA0;
-  --amarillo:       #F4C542;
-  --blanco:         #FFFFFF;
-  --turquesa-light: #e8f8f7;
-  --azul-dark:      #0e3f6e;
-  --gris-bg:        #f4f7fb;
-  --gris-texto:     #5a6475;
-  --sombra:         0 4px 24px rgba(20, 93, 160, 0.10);
-  --sombra-hover:   0 8px 32px rgba(20, 93, 160, 0.18);
-  --radio:          14px;
-  --rojo:           #e74c3c;
-  --naranja:        #e67e22;
-  --verde:          #27ae60;
-}
-
-/* ---- Reset ---- */
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* ---- Base ---- */
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--gris-bg);
-  color: #1e2b3a;
-}
-
-/* ---- Layout ---- */
-.layout {
-  display: flex;
-  flex: 1;
-}
-
-/* =============================================
-   NAV
-   ============================================= */
-nav {
-  background: var(--azul-dark);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 0 28px;
-  height: 54px;
-  flex-shrink: 0;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
-}
-
-.nav-logo {
-  font-family: 'Sora', sans-serif;
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: var(--amarillo);
-  margin-right: auto;
-  text-decoration: none;
-}
-
-.nav-dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-}
-
-.nav-dot.active {
-  background: var(--turquesa);
-  border-color: var(--turquesa);
-}
-
-.nav-search {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 8px;
-  padding: 6px 14px;
-  gap: 8px;
-  width: 340px;
-  color: #fff;
-  font-size: 0.85rem;
-}
-
-.nav-search input {
-  background: none;
-  border: none;
-  outline: none;
-  color: #fff;
-  width: 100%;
-  font-size: 0.85rem;
-}
-
-.nav-search input::placeholder {
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.nav-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #fff;
-  font-size: 1rem;
-  transition: background 0.2s;
-}
-
-.nav-icon:hover {
-  background: var(--turquesa);
-}
-
-/* =============================================
-   SIDEBAR
-   ============================================= */
-aside {
-  width: 210px;
-  min-width: 210px;
-  background: var(--blanco);
-  border-right: 1px solid #e3eaf3;
-  padding: 24px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  overflow-y: auto;
-}
-
-.sidebar-section {
-  font-family: 'Sora', sans-serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: var(--gris-texto);
-  margin: 14px 0 6px;
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: 9px;
-  cursor: pointer;
-  font-size: 0.88rem;
-  color: #3a4a5c;
-  font-weight: 500;
-  transition: background 0.18s, color 0.18s;
-  text-decoration: none;
-}
-
-.sidebar-item:hover {
-  background: var(--turquesa-light);
-  color: var(--turquesa);
-}
-
-.sidebar-item.active {
-  background: linear-gradient(135deg, var(--turquesa), var(--azul));
-  color: #fff;
-  font-weight: 600;
-}
-
-.sidebar-alert {
-  margin-top: auto;
-  background: #fff8e6;
-  border: 1px solid #f4c542;
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 0.78rem;
-  color: #5a4200;
-  line-height: 1.5;
-}
-
-/* =============================================
-   SHARED CARD / PANEL
-   ============================================= */
-.card {
-  background: #fff;
-  border-radius: var(--radio);
-  box-shadow: var(--sombra);
-}
-
-.panel {
-  background: #fff;
-  border-radius: var(--radio);
-  box-shadow: var(--sombra);
-  overflow: hidden;
-}
-
-.panel-header {
-  padding: 13px 16px 10px;
-  border-bottom: 1px solid #eef2f7;
-  font-family: 'Sora', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--azul);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.panel-body {
-  padding: 14px 16px;
-}
-
-/* =============================================
-   SHARED BADGES
-   ============================================= */
-.badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-family: 'Sora', sans-serif;
-}
-
-.badge-alto   { background: #fdecea; color: var(--rojo); }
-.badge-medio  { background: #fef0e6; color: var(--naranja); }
-.badge-bajo   { background: #eafaf1; color: var(--verde); }
-
-/* =============================================
-   RESPONSIVE — NAV / SIDEBAR
-   ============================================= */
-@media (max-width: 768px) {
-  .nav-search {
-    width: 160px;
-  }
-
-  aside {
-    display: none; /* simplificado para mobile — se puede reemplazar por menú hamburguesa */
-  }
-}
-/* =============================================
-   DengueAlert — mapa-riesgo.css
-   Estilos exclusivos de la página del mapa
-   ============================================= */
-
-/* ---- Layout de página ---- */
-body {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.layout {
-  overflow: hidden;
-  flex: 1;
-}
-
-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 24px;
-  gap: 16px;
-  overflow: hidden;
-}
-
-/* =============================================
-   TOPBAR
-   ============================================= */
-.topbar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.topbar-left h2 {
-  font-family: 'Sora', sans-serif;
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--azul);
-  margin-bottom: 4px;
-}
-
-.topbar-left p {
-  font-size: 0.83rem;
-  color: var(--gris-texto);
-  max-width: 500px;
-  line-height: 1.5;
-}
-
-.btn-reporte {
-  background: var(--turquesa);
-  color: #fff;
-  font-family: 'Sora', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-  box-shadow: 0 4px 14px rgba(25, 181, 165, 0.35);
-  transition: background 0.2s, transform 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-reporte:hover {
-  background: var(--azul);
-  transform: translateY(-1px);
-}
-
-/* =============================================
-   ALERTA STRIP
-   ============================================= */
-.alert-strip {
-  background: #fff;
-  border-radius: 10px;
-  border-left: 4px solid var(--amarillo);
-  padding: 12px 18px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.85rem;
-  color: #3a4a5c;
-  line-height: 1.5;
-  box-shadow: var(--sombra);
-  flex-shrink: 0;
-}
-
-.alert-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 5px;
-  border: 2px solid var(--amarillo);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  color: var(--amarillo);
-  font-weight: 700;
-  aria-hidden: true;
-}
-
-/* =============================================
-   CONTENT ROW
-   ============================================= */
-.content-row {
-  display: flex;
-  gap: 18px;
-  flex: 1;
-  min-height: 0;
-}
-
-/* =============================================
-   MAP PANEL
-   ============================================= */
-.map-panel {
-  flex: 1;
-  background: #fff;
-  border-radius: var(--radio);
-  box-shadow: var(--sombra);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.map-toolbar {
-  background: linear-gradient(90deg, var(--azul) 0%, #1a7ec8 100%);
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.map-toolbar-title {
-  font-family: 'Sora', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: #fff;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.filter-btn {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #fff;
-  font-size: 0.78rem;
-  padding: 5px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-  background: var(--amarillo);
-  color: var(--azul-dark);
-  border-color: var(--amarillo);
-  font-weight: 600;
-}
-
-.map-body {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Mapa simulado */
-.map-canvas {
-  width: 100%;
-  height: 100%;
-  background:
-    linear-gradient(rgba(25, 181, 165, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(25, 181, 165, 0.04) 1px, transparent 1px),
-    linear-gradient(135deg, #dff0ed 0%, #e8f4fb 40%, #d6ecf8 70%, #cfe8f5 100%);
-  background-size: 40px 40px, 40px 40px, 100% 100%;
-  position: relative;
-}
-
-/* Heat zones */
-.heat-zone {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(24px);
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-.heat-red    { background: radial-gradient(circle, #e74c3c 0%, transparent 70%); }
-.heat-orange { background: radial-gradient(circle, #e67e22 0%, transparent 70%); }
-.heat-yellow { background: radial-gradient(circle, #f1c40f 0%, transparent 70%); }
-.heat-green  { background: radial-gradient(circle, #27ae60 0%, transparent 70%); }
-
-/* Map pins */
-.map-pin {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  cursor: pointer;
-  text-align: center;
-}
-
-.pin-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2.5px solid #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  margin: 0 auto 2px;
-}
-
-.pin-label {
-  background: rgba(14, 63, 110, 0.88);
-  color: #fff;
-  font-size: 0.65rem;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 20px;
-  white-space: nowrap;
-  display: none; /* visible on hover via JS */
-}
-
-.map-pin:hover .pin-label,
-.map-pin.active .pin-label {
-  display: block;
-}
-
-.pin-red    .pin-dot { background: var(--rojo); }
-.pin-orange .pin-dot { background: var(--naranja); }
-.pin-green  .pin-dot { background: var(--verde); }
-
-/* Leyenda */
-.map-legend {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-}
-
-.legend-title {
-  font-family: 'Sora', sans-serif;
-  font-weight: 700;
-  font-size: 0.7rem;
-  color: var(--azul);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #3a4a5c;
-}
-
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-/* Controles de zoom */
-.map-controls {
-  position: absolute;
-  bottom: 14px;
-  right: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.map-ctrl-btn {
-  width: 32px;
-  height: 32px;
-  background: #fff;
-  border: 1px solid #dde4ed;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  cursor: pointer;
-  color: var(--azul);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: background 0.2s, color 0.2s;
-}
-
-.map-ctrl-btn:hover {
-  background: var(--turquesa);
-  color: #fff;
-}
-
-/* =============================================
-   RIGHT PANELS
-   ============================================= */
-.right-panels {
-  width: 270px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  overflow-y: auto;
-}
-
-/* Risk list */
-.risk-item {
-  display: flex;
-  align-items: center;
-  padding: 9px 0;
-  border-bottom: 1px solid #f3f6fa;
-  gap: 10px;
-  font-size: 0.82rem;
-}
-
-.risk-item:last-child { border-bottom: none; }
-
-.risk-bar-wrap { flex: 1; }
-
-.risk-name {
-  font-weight: 600;
-  color: #1e2b3a;
-  margin-bottom: 4px;
-  font-size: 0.8rem;
-}
-
-.risk-bar-bg {
-  height: 6px;
-  border-radius: 20px;
-  background: #eef2f7;
-  overflow: hidden;
-}
-
-.risk-bar-fill {
-  height: 100%;
-  border-radius: 20px;
-  transition: width 0.6s ease;
-}
-
-.risk-pct {
-  font-size: 0.75rem;
-  font-weight: 700;
-  min-width: 36px;
-  text-align: right;
-}
-
-.risk-high .risk-bar-fill { background: var(--rojo); }
-.risk-high .risk-pct      { color: var(--rojo); }
-.risk-med  .risk-bar-fill { background: var(--naranja); }
-.risk-med  .risk-pct      { color: var(--naranja); }
-.risk-low  .risk-bar-fill { background: var(--turquesa); }
-.risk-low  .risk-pct      { color: var(--turquesa); }
-
-/* Semáforo epidemiológico */
-.semaforo {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.semaforo-item {
-  border-radius: 8px;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.82rem;
-}
-
-.semaforo-item .dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.sem-red    { background: #fdecea; }
-.sem-red .dot { background: var(--rojo);    box-shadow: 0 0 6px rgba(231, 76, 60, 0.5); }
-.sem-orange { background: #fef0e6; }
-.sem-orange .dot { background: var(--naranja); box-shadow: 0 0 6px rgba(230, 126, 34, 0.4); }
-.sem-green  { background: #eafaf1; }
-.sem-green .dot  { background: var(--verde);   box-shadow: 0 0 6px rgba(39, 174, 96, 0.4); }
-
-.sem-label { font-weight: 600; font-size: 0.8rem; }
-.sem-count { margin-left: auto; font-weight: 700; font-size: 0.88rem; }
-
-/* =============================================
-   RESPONSIVE
-   ============================================= */
-@media (max-width: 900px) {
-  .content-row {
-    flex-direction: column;
-  }
-
-  .right-panels {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-  }
-
-  .right-panels .panel {
-    min-width: 260px;
-  }
-}
-
-</style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav role="navigation" aria-label="Navegación principal">
-  <a class="nav-logo" href="index.html">🦟 DengueAlert</a>
-  <div class="nav-dot"        aria-hidden="true"></div>
-  <div class="nav-dot active" aria-hidden="true"></div>
-  <div class="nav-dot"        aria-hidden="true"></div>
-  <div class="nav-search" role="search">
-    <span aria-hidden="true">🔍</span>
-    <label for="nav-search-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buscar</label>
-    <input id="nav-search-input" type="search" placeholder="Buscar barrio o zona..." aria-label="Buscar barrio o zona">
-  </div>
-  <button class="nav-icon" aria-label="Ver cuadrícula">⊞</button>
-  <button class="nav-icon" aria-label="Configuración">⚙</button>
-</nav>
-
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <aside aria-label="Menú lateral">
-    <div class="sidebar-section" aria-hidden="true">Principal</div>
-    <a class="sidebar-item" href="index.html"><span aria-hidden="true">🏠</span> Inicio</a>
-    <a class="sidebar-item active" href="mapa-riesgo.html" aria-current="page"><span aria-hidden="true">🗺️</span> Mapa de riesgo</a>
-    <a class="sidebar-item" href="reporte-riesgos.html"><span aria-hidden="true">📋</span> Reporte de riesgos</a>
-    <div class="sidebar-section" aria-hidden="true">Información</div>
-    <a class="sidebar-item" href="#"><span aria-hidden="true">📚</span> Guía de prevención</a>
-    <a class="sidebar-item" href="#"><span aria-hidden="true">🏥</span> Centros de salud</a>
-    <a class="sidebar-item" href="#"><span aria-hidden="true">📊</span> Estadísticas</a>
-  </aside>
-
-  <main id="main-content">
-
-    <!-- TOP BAR -->
-    <div class="topbar">
-      <div class="topbar-left">
-        <h1>🗺️ Mapa de Riesgo — Barranquilla</h1>
-        <p>Visualiza en tiempo real las zonas de mayor riesgo de dengue. Los focos se clasifican según los reportes ciudadanos y datos epidemiológicos del INS.</p>
-      </div>
-      <a href="reporte-riesgos.html" class="btn-reporte">📋 Reportar foco</a>
-    </div>
-
-    <!-- ALERT -->
-    <div class="alert-strip" role="alert" aria-live="polite">
-      <div class="alert-icon" aria-hidden="true">!</div>
-      <div>
-        <strong>Alerta activa:</strong> El 23 de mayo se detectaron 3 nuevos focos críticos en el norte de la ciudad.
-        Las zonas marcadas en <strong style="color:var(--rojo)">rojo</strong> requieren atención inmediata.
-        Evita acumular agua estancada.
-      </div>
-    </div>
-
-    <!-- CONTENT ROW -->
-    <div class="content-row">
-
-      <!-- MAP -->
-      <section class="map-panel" aria-label="Mapa interactivo de riesgo">
-        <div class="map-toolbar">
-          <div class="map-toolbar-title" id="map-title">🗺️ Mapa interactivo — Semana 20, 2026</div>
-          <div role="group" aria-label="Filtrar por nivel de riesgo">
-            <button class="filter-btn active" data-filter="todos"  aria-pressed="true">Todos</button>
-            <button class="filter-btn"        data-filter="alto"   aria-pressed="false">Alto</button>
-            <button class="filter-btn"        data-filter="medio"  aria-pressed="false">Medio</button>
-            <button class="filter-btn"        data-filter="bajo"   aria-pressed="false">Bajo</button>
-          </div>
-        </div>
-
-        <div class="map-body">
-          <div class="map-canvas" id="map-canvas">
-
-            <!-- Heat zones -->
-            <div class="heat-zone heat-red"    style="width:160px;height:160px;top:30px;left:120px;"  aria-hidden="true"></div>
-            <div class="heat-zone heat-orange" style="width:130px;height:130px;top:120px;left:260px;" aria-hidden="true"></div>
-            <div class="heat-zone heat-yellow" style="width:100px;height:100px;top:200px;left:80px;"  aria-hidden="true"></div>
-            <div class="heat-zone heat-red"    style="width:120px;height:120px;top:60px;left:350px;"  aria-hidden="true"></div>
-            <div class="heat-zone heat-green"  style="width:90px;height:90px;top:250px;left:340px;"   aria-hidden="true"></div>
-
-            <!-- Pins — data-nivel: alto | medio | bajo -->
-            <div class="map-pin pin-red"    data-nivel="alto"  style="top:100px;left:160px;"
-                 role="button" tabindex="0" aria-label="El Bosque — riesgo crítico">
-              <div class="pin-dot"></div>
-              <div class="pin-label">El Bosque 🔴</div>
-            </div>
-            <div class="map-pin pin-red"    data-nivel="alto"  style="top:70px;left:380px;"
-                 role="button" tabindex="0" aria-label="Ciudadela 20J — riesgo crítico">
-              <div class="pin-dot"></div>
-              <div class="pin-label">Ciudadela 20J 🔴</div>
-            </div>
-            <div class="map-pin pin-orange" data-nivel="medio" style="top:170px;left:290px;"
-                 role="button" tabindex="0" aria-label="Simón Bolívar — riesgo alto">
-              <div class="pin-dot"></div>
-              <div class="pin-label">Simón Bolívar 🟠</div>
-            </div>
-            <div class="map-pin pin-orange" data-nivel="medio" style="top:220px;left:130px;"
-                 role="button" tabindex="0" aria-label="Las Nieves — riesgo alto">
-              <div class="pin-dot"></div>
-              <div class="pin-label">Las Nieves 🟠</div>
-            </div>
-            <div class="map-pin pin-green"  data-nivel="bajo"  style="top:290px;left:370px;"
-                 role="button" tabindex="0" aria-label="El Prado — riesgo bajo">
-              <div class="pin-dot"></div>
-              <div class="pin-label">El Prado 🟢</div>
-            </div>
-            <div class="map-pin pin-green"  data-nivel="bajo"  style="top:320px;left:200px;"
-                 role="button" tabindex="0" aria-label="Manga — riesgo bajo">
-              <div class="pin-dot"></div>
-              <div class="pin-label">Manga 🟢</div>
-            </div>
-
-            <!-- Legend -->
-            <div class="map-legend" aria-label="Leyenda del mapa">
-              <div class="legend-title">Nivel de riesgo</div>
-              <div class="legend-item"><div class="legend-dot" style="background:var(--rojo)"   aria-hidden="true"></div>Riesgo crítico</div>
-              <div class="legend-item"><div class="legend-dot" style="background:var(--naranja)" aria-hidden="true"></div>Riesgo alto</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#f1c40f"        aria-hidden="true"></div>Riesgo medio</div>
-              <div class="legend-item"><div class="legend-dot" style="background:var(--verde)"   aria-hidden="true"></div>Riesgo bajo</div>
-            </div>
-
-            <!-- Zoom controls -->
-            <div class="map-controls" aria-label="Controles del mapa">
-              <button class="map-ctrl-btn" id="zoom-in"     aria-label="Acercar mapa">+</button>
-              <button class="map-ctrl-btn" id="zoom-out"    aria-label="Alejar mapa">−</button>
-              <button class="map-ctrl-btn" id="zoom-reset"  aria-label="Restablecer zoom">⊕</button>
-            </div>
-
-          </div><!-- /map-canvas -->
-        </div><!-- /map-body -->
-      </section>
-
-      <!-- RIGHT PANELS -->
-      <div class="right-panels">
-
-        <div class="panel">
-          <div class="panel-header" id="riesgo-title">📊 Zonas por nivel de riesgo</div>
-          <div class="panel-body" aria-labelledby="riesgo-title">
-
-            <div class="risk-item risk-high">
-              <div class="risk-bar-wrap">
-                <div class="risk-name">El Bosque</div>
-                <div class="risk-bar-bg" role="progressbar" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100" aria-label="El Bosque 92%">
-                  <div class="risk-bar-fill" style="width:92%"></div>
-                </div>
-              </div>
-              <div class="risk-pct" aria-hidden="true">92%</div>
-            </div>
-
-            <div class="risk-item risk-high">
-              <div class="risk-bar-wrap">
-                <div class="risk-name">Ciudadela 20J</div>
-                <div class="risk-bar-bg" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" aria-label="Ciudadela 20J 85%">
-                  <div class="risk-bar-fill" style="width:85%"></div>
-                </div>
-              </div>
-              <div class="risk-pct" aria-hidden="true">85%</div>
-            </div>
-
-            <div class="risk-item risk-med">
-              <div class="risk-bar-wrap">
-                <div class="risk-name">Simón Bolívar</div>
-                <div class="risk-bar-bg" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="Simón Bolívar 62%">
-                  <div class="risk-bar-fill" style="width:62%"></div>
-                </div>
-              </div>
-              <div class="risk-pct" aria-hidden="true">62%</div>
-            </div>
-
-            <div class="risk-item risk-med">
-              <div class="risk-bar-wrap">
-                <div class="risk-name">Las Nieves</div>
-                <div class="risk-bar-bg" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" aria-label="Las Nieves 55%">
-                  <div class="risk-bar-fill" style="width:55%"></div>
-                </div>
-              </div>
-              <div class="risk-pct" aria-hidden="true">55%</div>
-            </div>
-
-            <div class="risk-item risk-low">
-              <div class="risk-bar-wrap">
-                <div class="risk-name">El Prado</div>
-                <div class="risk-bar-bg" role="progressbar" aria-valuenow="28" aria-valuemin="0" aria-valuemax="100" aria-label="El Prado 28%">
-                  <div class="risk-bar-fill" style="width:28%"></div>
-                </div>
-              </div>
-              <div class="risk-pct" aria-hidden="true">28%</div>
-            </div>
-
-            <div class="risk-item risk-low">
-              <div class="risk-bar-wrap">
-                <div class="risk-name">Manga</div>
-                <div class="risk-bar-bg" role="progressbar" aria-valuenow="18" aria-valuemin="0" aria-valuemax="100" aria-label="Manga 18%">
-                  <div class="risk-bar-fill" style="width:18%"></div>
-                </div>
-              </div>
-              <div class="risk-pct" aria-hidden="true">18%</div>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header" id="semaforo-title">🚦 Semáforo epidemiológico</div>
-          <div class="panel-body" aria-labelledby="semaforo-title">
-            <div class="semaforo">
-              <div class="semaforo-item sem-red">
-                <div class="dot" aria-hidden="true"></div>
-                <div>
-                  <div class="sem-label">Riesgo Crítico</div>
-                  <div style="font-size:0.75rem;color:#666">Intervención urgente</div>
-                </div>
-                <div class="sem-count" style="color:var(--rojo)" aria-label="3 zonas en riesgo crítico">3</div>
-              </div>
-              <div class="semaforo-item sem-orange">
-                <div class="dot" aria-hidden="true"></div>
-                <div>
-                  <div class="sem-label">Riesgo Alto</div>
-                  <div style="font-size:0.75rem;color:#666">Vigilancia activa</div>
-                </div>
-                <div class="sem-count" style="color:var(--naranja)" aria-label="8 zonas en riesgo alto">8</div>
-              </div>
-              <div class="semaforo-item sem-green">
-                <div class="dot" aria-hidden="true"></div>
-                <div>
-                  <div class="sem-label">Riesgo Bajo</div>
-                  <div style="font-size:0.75rem;color:#666">Monitoreo normal</div>
-                </div>
-                <div class="sem-count" style="color:var(--verde)" aria-label="13 zonas en riesgo bajo">13</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /right-panels -->
-
-    </div><!-- /content-row -->
-  </main>
-</div>
-
-<script>
-  /* ---- Filtros del mapa ---- */
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const pins = document.querySelectorAll('.map-pin');
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const nivel = btn.dataset.filter;
-
-      // Actualizar estado activo
-      filterBtns.forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-pressed', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-pressed', 'true');
-
-      // Mostrar/ocultar pins
-      pins.forEach(pin => {
-        if (nivel === 'todos' || pin.dataset.nivel === nivel) {
-          pin.style.display = '';
-        } else {
-          pin.style.display = 'none';
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mapa de Riesgo - Prevención Dengue</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&amp;family=Open+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-      });
-    });
-  });
-
-  /* ---- Etiquetas de pin al hover / teclado ---- */
-  pins.forEach(pin => {
-    // Mouse
-    pin.addEventListener('mouseenter', () => pin.classList.add('active'));
-    pin.addEventListener('mouseleave', () => pin.classList.remove('active'));
-    // Teclado
-    pin.addEventListener('focus',  () => pin.classList.add('active'));
-    pin.addEventListener('blur',   () => pin.classList.remove('active'));
-    pin.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') pin.classList.toggle('active');
-    });
-  });
-
-  /* ---- Zoom del mapa ---- */
-  const canvas = document.getElementById('map-canvas');
-  let scale = 1;
-  const STEP = 0.2;
-  const MAX = 2.5;
-  const MIN = 0.5;
-
-  function applyZoom() {
-    canvas.style.transform = `scale(${scale})`;
-    canvas.style.transformOrigin = 'center center';
-  }
-
-  document.getElementById('zoom-in').addEventListener('click', () => {
-    scale = Math.min(scale + STEP, MAX);
-    applyZoom();
-  });
-
-  document.getElementById('zoom-out').addEventListener('click', () => {
-    scale = Math.max(scale - STEP, MIN);
-    applyZoom();
-  });
-
-  document.getElementById('zoom-reset').addEventListener('click', () => {
-    scale = 1;
-    applyZoom();
-  });
-</script>
-
-</body>
-</html>
+        .map-gradient-overlay {
+            background: linear-gradient(to bottom, rgba(247, 249, 251, 0) 0%, rgba(247, 249, 251, 0.8) 100%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eceef0",
+                        "primary": "#006a60",
+                        "on-primary-fixed": "#00201c",
+                        "error-container": "#ffdad6",
+                        "secondary": "#1a60a3",
+                        "on-primary-fixed-variant": "#005048",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary-container": "#7db6ff",
+                        "secondary-fixed": "#d3e4ff",
+                        "tertiary-fixed": "#ffdf94",
+                        "tertiary-container": "#c79c16",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "outline": "#6c7a77",
+                        "on-tertiary-container": "#483600",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "primary-fixed-dim": "#54dbca",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#00477f",
+                        "surface-tint": "#006a60",
+                        "on-surface-variant": "#3c4947",
+                        "primary-fixed": "#74f8e6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary-container": "#19b5a5",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-fixed": "#241a00",
+                        "inverse-surface": "#2d3133",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#a2c9ff",
+                        "outline-variant": "#bbcac6",
+                        "on-secondary-fixed-variant": "#004882",
+                        "on-primary-container": "#00403a",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-bright": "#f7f9fb",
+                        "on-surface": "#191c1e",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary-fixed": "#001c38",
+                        "inverse-primary": "#54dbca",
+                        "surface-container-high": "#e6e8ea",
+                        "tertiary-fixed-dim": "#efc13e",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary": "#765b00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "md": "24px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "xl": "80px",
+                        "sm": "12px",
+                        "lg": "48px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Montserrat"],
+                        "label-md": ["Open Sans"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "body-md": ["Open Sans"],
+                        "body-lg": ["Open Sans"],
+                        "headline-md": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-outline-variant shadow-sm z-50 sticky top-0">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="text-headline-md font-headline-md font-extrabold text-primary">Prevención Dengue</span>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex gap-lg items-center">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="index.html">Inicio</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md" href="mapa-riesgo.html">Mapa de Riesgo</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="reporte-riesgos.html">Reportar Riesgo</a>
+</nav>
+<div class="flex items-center gap-sm">
+<button class="bg-error text-on-error font-bold py-2 px-6 rounded-full hover:opacity-90 active:scale-95 transition-all text-label-md font-label-md">
+                    Emergencia
+                </button>
+</div>
+</div>
+</header>
+<main class="flex-grow flex flex-col md:flex-row max-w-[1920px] mx-auto w-full">
+<!-- Sidebar Navigation -->
+<aside class="hidden md:flex flex-col w-72 bg-surface-container-low border-r border-outline-variant p-6 gap-lg">
+<div class="space-y-4">
+<div class="flex items-center gap-3 p-3 bg-primary-container/20 text-on-primary-container rounded-lg border border-primary/20">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<span class="font-label-md text-label-md">Visualización de Datos</span>
+</div>
+<div class="flex flex-col gap-2">
+<p class="font-label-md text-label-md text-on-surface-variant px-3 uppercase tracking-wider text-[10px]">Filtrar por</p>
+<button class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+<span class="material-symbols-outlined">distance</span>
+<span class="font-label-md text-label-md">Radio de Proximidad</span>
+</button>
+<button class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">Historial 30 días</span>
+</button>
+<button class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+<span class="material-symbols-outlined">water_drop</span>
+<span class="font-label-md text-label-md">Criaderos Reportados</span>
+</button>
+</div>
+</div>
+<div class="mt-auto p-4 bg-tertiary-container/10 border-l-4 border-tertiary rounded-r-lg">
+<p class="font-label-md text-label-md text-on-tertiary-container font-bold mb-1">Nota de Seguridad</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">Los datos mostrados se actualizan cada 24 horas mediante vigilancia epidemiológica oficial.</p>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-grow p-margin-mobile md:p-8 flex flex-col gap-6 overflow-hidden">
+<!-- Header Info Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+<div>
+<h1 class="font-headline-md text-headline-md text-on-surface">Vigilancia en Tiempo Real</h1>
+<p class="text-body-md text-on-surface-variant">Análisis territorial de focos infecciosos y zonas de calor.</p>
+</div>
+<div class="flex items-center gap-3 bg-surface p-2 rounded-lg border border-outline-variant">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 md:w-64 font-body-md" placeholder="Buscar zona o municipio..." type="text"/>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+<!-- Large Central Map Visualization -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<div class="relative bg-surface-container-high rounded-xl border border-outline-variant overflow-hidden h-[500px] lg:h-full flex items-center justify-center">
+<img alt="Mapa interactivo" class="absolute inset-0 w-full h-full object-cover opacity-80" data-alt="A professional satellite view of a metropolitan city layout with overlaid interactive digital heat maps showing glowing turquoise and yellow zones. The visual style is high-tech health surveillance dashboard, featuring a clean interface and data overlays. Lighting is bright, simulating a modern clinical command center aesthetic with vibrant health-related data visualizations." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCB7yqdVP2kjMBh6kFr6-U0M65Wl51p50JUZXYvB84292UdEtOaI22m5bzrczDZUF0LkwTOZSlEbLOheciyZRsCKkwurY3ef6p-OU9XrjJXjub_a_zLzTCQddo37d9IlBhgs0TfJ-6eRJ8FSLDgkCOJ7qqcHpClDMnjKKE-mrKbJlAEtYjVBlFJVTwPc55vn69XWc5VDpmmbqQpP86AwMX_6GDnNXnWaZSytKroCl9UpP5Jm3D-QZ8OcJw7H3xEuiWIKk1g6a1Tjs"/>
+<!-- Map Controls Floating -->
+<div class="absolute top-4 right-4 flex flex-col gap-2">
+<button class="bg-surface-container-lowest p-2 rounded-lg shadow-md hover:bg-surface-variant transition-colors border border-outline-variant">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="bg-surface-container-lowest p-2 rounded-lg shadow-md hover:bg-surface-variant transition-colors border border-outline-variant">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<button class="bg-surface-container-lowest p-2 rounded-lg shadow-md hover:bg-surface-variant transition-colors border border-outline-variant">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+<!-- Legend Overlay -->
+<div class="absolute bottom-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md p-4 rounded-lg border border-outline-variant shadow-lg max-w-xs">
+<h4 class="font-label-md text-label-md mb-2">Nivel de Riesgo</h4>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-error"></div>
+<span class="text-xs text-on-surface-variant font-body-md">Crítico (Brote activo)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-tertiary"></div>
+<span class="text-xs text-on-surface-variant font-body-md">Medio (Focos detectados)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-xs text-on-surface-variant font-body-md">Bajo (Bajo control)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side Info Cards -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Stats Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-md text-headline-md text-primary">Resumen Local</h3>
+<span class="material-symbols-outlined text-outline">trending_up</span>
+</div>
+<div class="space-y-4">
+<div class="p-4 rounded-lg bg-surface border border-outline-variant">
+<p class="text-xs text-on-surface-variant uppercase font-bold tracking-tight font-label-md">Casos Confirmados</p>
+<p class="text-3xl font-black text-on-surface mt-1 font-headline-md">1,240</p>
+<div class="flex items-center gap-1 mt-2 text-error text-xs font-bold font-label-md">
+<span class="material-symbols-outlined text-sm">arrow_upward</span>
+<span>+12% vs mes anterior</span>
+</div>
+</div>
+<div class="p-4 rounded-lg bg-surface border border-outline-variant">
+<p class="text-xs text-on-surface-variant uppercase font-bold tracking-tight font-label-md">Zonas de Fumigación</p>
+<p class="text-3xl font-black text-on-surface mt-1 font-headline-md">18</p>
+<div class="w-full bg-surface-container h-2 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 65%"></div>
+</div>
+<p class="text-[10px] text-on-surface-variant mt-1 text-right font-body-md">65% Meta semanal alcanzada</p>
+</div>
+</div>
+</div>
+<!-- Alerts Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-t-4 border-tertiary border-outline-variant shadow-sm">
+<h3 class="font-label-md text-label-md text-tertiary flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined">warning</span>
+                            Alertas Recientes
+                        </h3>
+<div class="space-y-3">
+<div class="flex gap-3">
+<div class="w-2 h-2 rounded-full bg-error mt-1.5 flex-shrink-0"></div>
+<div>
+<p class="text-sm font-bold text-on-surface font-label-md">Brote detectado en Sector 4</p>
+<p class="text-xs text-on-surface-variant font-body-md">Hace 2 horas - Requiere intervención inmediata.</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary mt-1.5 flex-shrink-0"></div>
+<div>
+<p class="text-sm font-bold text-on-surface font-label-md">Condiciones climáticas de riesgo</p>
+<p class="text-xs text-on-surface-variant font-body-md">Pronóstico de lluvias intensas en 24h.</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 border-2 border-secondary text-secondary font-bold rounded-lg hover:bg-secondary/5 transition-colors text-label-md font-label-md">
+                            Ver historial completo
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-high border-t border-outline-variant mt-xl">
+<div class="flex flex-col md:flex-row justify-between items-center gap-md w-full px-margin-mobile md:px-margin-desktop py-lg max-w-7xl mx-auto">
+<div class="flex flex-col gap-2">
+<span class="font-display-lg text-display-lg font-black text-primary">Prevención</span>
+<p class="body-md text-body-md text-on-surface-variant max-w-sm">Sistema Nacional de Vigilancia Epidemiológica coordinado por el Ministerio de Salud.</p>
+</div>
+<div class="grid grid-cols-2 md:flex md:gap-lg gap-4">
+<div class="flex flex-col gap-2">
+<p class="font-label-md text-label-md font-bold text-on-surface">Recursos</p>
+<a class="text-on-surface-variant hover:text-secondary transition-colors text-label-md font-label-md" href="#">Sobre nosotros</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors text-label-md font-label-md" href="#">Contacto</a>
+</div>
+<div class="flex flex-col gap-2">
+<p class="font-label-md text-label-md font-bold text-on-surface">Legal</p>
+<a class="text-on-surface-variant hover:text-secondary transition-colors text-label-md font-label-md" href="#">Privacidad</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors text-label-md font-label-md" href="#">Condiciones</a>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-6 border-t border-outline-variant/30 text-center md:text-left">
+<p class="body-md text-body-md text-on-surface-variant opacity-70 italic">© 2024 Sistema Nacional de Salud. Vigilancia Epidemiológica del Dengue.</p>
+</div>
+</footer>
+<!-- FAB for mobile reporting -->
+<button class="md:hidden fixed bottom-6 right-6 bg-primary text-on-primary w-14 h-14 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add_alert</span>
+</button>
+</body></html>

@@ -1,1067 +1,266 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="DengueAlert — Reporta un foco de riesgo de dengue en tu barrio">
-  <title>DengueAlert — Reporte de Riesgos</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦟</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-/* =============================================
-   DengueAlert — Global Styles
-   Variables, reset, nav, sidebar, shared utils
-   ============================================= */
 
-/* Google Fonts */
-
-/* ---- Variables ---- */
-:root {
-  --turquesa:       #19B5A5;
-  --azul:           #145DA0;
-  --amarillo:       #F4C542;
-  --blanco:         #FFFFFF;
-  --turquesa-light: #e8f8f7;
-  --azul-dark:      #0e3f6e;
-  --gris-bg:        #f4f7fb;
-  --gris-texto:     #5a6475;
-  --sombra:         0 4px 24px rgba(20, 93, 160, 0.10);
-  --sombra-hover:   0 8px 32px rgba(20, 93, 160, 0.18);
-  --radio:          14px;
-  --rojo:           #e74c3c;
-  --naranja:        #e67e22;
-  --verde:          #27ae60;
-}
-
-/* ---- Reset ---- */
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* ---- Base ---- */
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--gris-bg);
-  color: #1e2b3a;
-}
-
-/* ---- Layout ---- */
-.layout {
-  display: flex;
-  flex: 1;
-}
-
-/* =============================================
-   NAV
-   ============================================= */
-nav {
-  background: var(--azul-dark);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 0 28px;
-  height: 54px;
-  flex-shrink: 0;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
-}
-
-.nav-logo {
-  font-family: 'Sora', sans-serif;
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: var(--amarillo);
-  margin-right: auto;
-  text-decoration: none;
-}
-
-.nav-dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-}
-
-.nav-dot.active {
-  background: var(--turquesa);
-  border-color: var(--turquesa);
-}
-
-.nav-search {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 8px;
-  padding: 6px 14px;
-  gap: 8px;
-  width: 340px;
-  color: #fff;
-  font-size: 0.85rem;
-}
-
-.nav-search input {
-  background: none;
-  border: none;
-  outline: none;
-  color: #fff;
-  width: 100%;
-  font-size: 0.85rem;
-}
-
-.nav-search input::placeholder {
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.nav-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #fff;
-  font-size: 1rem;
-  transition: background 0.2s;
-}
-
-.nav-icon:hover {
-  background: var(--turquesa);
-}
-
-/* =============================================
-   SIDEBAR
-   ============================================= */
-aside {
-  width: 210px;
-  min-width: 210px;
-  background: var(--blanco);
-  border-right: 1px solid #e3eaf3;
-  padding: 24px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  overflow-y: auto;
-}
-
-.sidebar-section {
-  font-family: 'Sora', sans-serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: var(--gris-texto);
-  margin: 14px 0 6px;
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: 9px;
-  cursor: pointer;
-  font-size: 0.88rem;
-  color: #3a4a5c;
-  font-weight: 500;
-  transition: background 0.18s, color 0.18s;
-  text-decoration: none;
-}
-
-.sidebar-item:hover {
-  background: var(--turquesa-light);
-  color: var(--turquesa);
-}
-
-.sidebar-item.active {
-  background: linear-gradient(135deg, var(--turquesa), var(--azul));
-  color: #fff;
-  font-weight: 600;
-}
-
-.sidebar-alert {
-  margin-top: auto;
-  background: #fff8e6;
-  border: 1px solid #f4c542;
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 0.78rem;
-  color: #5a4200;
-  line-height: 1.5;
-}
-
-/* =============================================
-   SHARED CARD / PANEL
-   ============================================= */
-.card {
-  background: #fff;
-  border-radius: var(--radio);
-  box-shadow: var(--sombra);
-}
-
-.panel {
-  background: #fff;
-  border-radius: var(--radio);
-  box-shadow: var(--sombra);
-  overflow: hidden;
-}
-
-.panel-header {
-  padding: 13px 16px 10px;
-  border-bottom: 1px solid #eef2f7;
-  font-family: 'Sora', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--azul);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.panel-body {
-  padding: 14px 16px;
-}
-
-/* =============================================
-   SHARED BADGES
-   ============================================= */
-.badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-family: 'Sora', sans-serif;
-}
-
-.badge-alto   { background: #fdecea; color: var(--rojo); }
-.badge-medio  { background: #fef0e6; color: var(--naranja); }
-.badge-bajo   { background: #eafaf1; color: var(--verde); }
-
-/* =============================================
-   RESPONSIVE — NAV / SIDEBAR
-   ============================================= */
-@media (max-width: 768px) {
-  .nav-search {
-    width: 160px;
-  }
-
-  aside {
-    display: none; /* simplificado para mobile — se puede reemplazar por menú hamburguesa */
-  }
-}
-/* =============================================
-   DengueAlert — reporte-riesgos.css
-   Estilos exclusivos de la página de reporte
-   ============================================= */
-
-/* ---- Layout de página ---- */
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.layout {
-  flex: 1;
-}
-
-main {
-  flex: 1;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 32px;
-  background: var(--gris-bg);
-}
-
-/* =============================================
-   FORM CARD
-   ============================================= */
-.form-card {
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 8px 40px rgba(20, 93, 160, 0.13);
-  width: 100%;
-  max-width: 680px;
-  overflow: hidden;
-}
-
-/* ---- Header ---- */
-.form-header {
-  background: linear-gradient(135deg, var(--azul) 0%, #1a7ec8 60%, var(--turquesa) 100%);
-  padding: 28px 36px;
-  position: relative;
-  overflow: hidden;
-}
-
-.form-header::before {
-  content: '';
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  background: rgba(255, 255, 255, 0.07);
-  border-radius: 50%;
-  top: -80px;
-  right: -60px;
-}
-
-.form-header h1 {
-  font-family: 'Sora', sans-serif;
-  font-weight: 800;
-  font-size: 1.4rem;
-  color: #fff;
-  margin-bottom: 6px;
-  position: relative;
-}
-
-.form-header p {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.82);
-  position: relative;
-  line-height: 1.5;
-}
-
-/* ---- Progress bar ---- */
-.progress-bar {
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--amarillo);
-  width: 66%; /* paso 2 de 3 */
-  transition: width 0.5s;
-}
-
-/* ---- Steps ---- */
-.steps {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 20px 36px 0;
-  margin-bottom: -14px;
-}
-
-.step {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--gris-texto);
-}
-
-.step-num {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #dde4ed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  color: var(--gris-texto);
-  font-weight: 700;
-}
-
-.step.done   .step-num { background: var(--turquesa); color: #fff; }
-.step.active .step-num { background: var(--azul);     color: #fff; }
-.step.active           { color: var(--azul); }
-
-.step-line {
-  flex: 1;
-  height: 2px;
-  background: #dde4ed;
-  border-radius: 2px;
-}
-
-.step-line.done { background: var(--turquesa); }
-
-/* =============================================
-   FORM BODY
-   ============================================= */
-.form-body {
-  padding: 32px 36px;
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-}
-
-.field-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-}
-
-.field-row.full {
-  grid-template-columns: 1fr;
-}
-
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--azul);
-  letter-spacing: 0.2px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-label .required { color: #e74c3c; }
-
-/* ---- Inputs ---- */
-.input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon {
-  position: absolute;
-  left: 12px;
-  font-size: 0.95rem;
-  color: var(--gris-texto);
-  pointer-events: none;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-select,
-textarea {
-  width: 100%;
-  padding: 11px 14px 11px 36px;
-  border: 1.5px solid #dde4ed;
-  border-radius: 9px;
-  font-size: 0.88rem;
-  font-family: 'Inter', sans-serif;
-  color: #1e2b3a;
-  background: #f9fbfd;
-  transition: border 0.2s, box-shadow 0.2s, background 0.2s;
-  outline: none;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="tel"]:focus,
-select:focus,
-textarea:focus {
-  border-color: var(--turquesa);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(25, 181, 165, 0.15);
-}
-
-/* Estado de error */
-input.invalid,
-select.invalid,
-textarea.invalid {
-  border-color: var(--rojo);
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.12);
-}
-
-.field-error {
-  font-size: 0.75rem;
-  color: var(--rojo);
-  display: none;
-}
-
-.field-error.visible {
-  display: block;
-}
-
-input[type="text"].no-icon,
-input[type="tel"].no-icon,
-select.no-icon {
-  padding-left: 14px;
-}
-
-textarea {
-  padding-left: 14px;
-  resize: vertical;
-  min-height: 90px;
-  line-height: 1.6;
-}
-
-select { cursor: pointer; }
-
-/* ---- Upload zone ---- */
-.upload-zone {
-  border: 2px dashed #c5d3e4;
-  border-radius: 10px;
-  background: #f4f7fb;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 32px 20px;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  text-align: center;
-}
-
-.upload-zone:hover {
-  border-color: var(--turquesa);
-  background: var(--turquesa-light);
-}
-
-.upload-icon  { font-size: 2.2rem; }
-
-.upload-title {
-  font-family: 'Sora', sans-serif;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: var(--azul);
-}
-
-.upload-sub {
-  font-size: 0.78rem;
-  color: var(--gris-texto);
-}
-
-.upload-btn {
-  background: var(--azul);
-  color: #fff;
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 7px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.upload-btn:hover { background: var(--turquesa); }
-
-/* Input de archivo oculto */
-#file-input {
-  display: none;
-}
-
-/* Preview de imágenes cargadas */
-.upload-preview {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.preview-thumb {
-  width: 64px;
-  height: 64px;
-  border-radius: 8px;
-  object-fit: cover;
-  border: 2px solid #dde4ed;
-}
-
-/* ---- Divider ---- */
-.divider {
-  height: 1px;
-  background: #eef2f7;
-}
-
-/* =============================================
-   FORM FOOTER
-   ============================================= */
-.form-footer {
-  padding: 20px 36px 28px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f9fbfd;
-  border-top: 1px solid #eef2f7;
-}
-
-.btn-cancel {
-  background: none;
-  border: 1.5px solid #dde4ed;
-  color: var(--gris-texto);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 500;
-  padding: 10px 22px;
-  border-radius: 9px;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.btn-cancel:hover {
-  border-color: var(--azul);
-  color: var(--azul);
-}
-
-.btn-group { display: flex; gap: 10px; }
-
-.btn-save {
-  background: #eef2f7;
-  color: var(--azul);
-  font-family: 'Sora', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 9px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-save:hover { background: #dde4ed; }
-
-.btn-submit {
-  background: linear-gradient(135deg, var(--turquesa), var(--azul));
-  color: #fff;
-  font-family: 'Sora', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 700;
-  padding: 11px 26px;
-  border-radius: 9px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(25, 181, 165, 0.35);
-  transition: transform 0.2s, box-shadow 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-submit:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 22px rgba(25, 181, 165, 0.45);
-}
-
-/* ---- Toast de éxito ---- */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: var(--verde);
-  color: #fff;
-  font-family: 'Sora', sans-serif;
-  font-weight: 600;
-  font-size: 0.88rem;
-  padding: 14px 22px;
-  border-radius: 12px;
-  box-shadow: 0 6px 24px rgba(39, 174, 96, 0.35);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.3s, transform 0.3s;
-  pointer-events: none;
-  z-index: 100;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* =============================================
-   RESPONSIVE
-   ============================================= */
-@media (max-width: 640px) {
-  main { padding: 16px; }
-
-  .form-header,
-  .form-body,
-  .form-footer { padding-left: 20px; padding-right: 20px; }
-
-  .steps { padding-left: 20px; padding-right: 20px; }
-
-  .field-row { grid-template-columns: 1fr; }
-
-  .form-footer { flex-direction: column; gap: 12px; align-items: stretch; }
-
-  .btn-group { justify-content: flex-end; }
-}
-
-</style>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reportar Riesgo - Prevención Dengue</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&amp;family=Open+Sans:wght@400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "outline": "#6c7a77",
+                        "tertiary-fixed": "#ffdf94",
+                        "inverse-on-surface": "#f3f0f0",
+                        "tertiary": "#765b00",
+                        "on-surface": "#1b1c1c",
+                        "primary-fixed": "#74f8e6",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#00477f",
+                        "surface-container-highest": "#e4e2e1",
+                        "background": "#fbf9f8",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#005048",
+                        "inverse-primary": "#54dbca",
+                        "on-surface-variant": "#3c4947",
+                        "surface-dim": "#dcd9d9",
+                        "surface-tint": "#006a60",
+                        "on-secondary-fixed-variant": "#004882",
+                        "on-error": "#ffffff",
+                        "primary-container": "#19b5a5",
+                        "on-primary-fixed": "#00201c",
+                        "tertiary-container": "#c79c16",
+                        "on-primary-container": "#00403a",
+                        "surface": "#fbf9f8",
+                        "on-tertiary-fixed": "#241a00",
+                        "surface-bright": "#fbf9f8",
+                        "inverse-surface": "#303030",
+                        "surface-container-high": "#eae8e7",
+                        "secondary-container": "#7db6ff",
+                        "surface-container": "#f0eded",
+                        "surface-container-low": "#f6f3f2",
+                        "secondary-fixed": "#d3e4ff",
+                        "on-tertiary-container": "#483600",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e4e2e1",
+                        "primary": "#006a60",
+                        "outline-variant": "#bbcac6",
+                        "on-background": "#1b1c1c",
+                        "secondary-fixed-dim": "#a2c9ff",
+                        "tertiary-fixed-dim": "#efc13e",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "secondary": "#1a60a3",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#001c38",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#54dbca"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "xl": "64px",
+                        "sm": "12px",
+                        "lg": "40px",
+                        "gutter": "24px",
+                        "md": "24px",
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Open Sans"],
+                        "headline-md": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-sm": ["Montserrat"],
+                        "body-md": ["Open Sans"],
+                        "display-lg": ["Montserrat"],
+                        "label-md": ["Open Sans"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "label-sm": ["Open Sans"],
+                        "body-sm": ["Open Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "14px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .form-input-focus:focus {
+            border-color: #006a60;
+            box-shadow: 0 0 0 2px rgba(0, 106, 96, 0.2);
+        }
+    </style>
 </head>
-<body>
-
-<!-- NAV -->
-<nav role="navigation" aria-label="Navegación principal">
-  <a class="nav-logo" href="index.html">🦟 DengueAlert</a>
-  <div class="nav-dot"        aria-hidden="true"></div>
-  <div class="nav-dot"        aria-hidden="true"></div>
-  <div class="nav-dot active" aria-hidden="true"></div>
-  <div class="nav-search" role="search">
-    <span aria-hidden="true">🔍</span>
-    <label for="nav-search-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buscar</label>
-    <input id="nav-search-input" type="search" placeholder="Buscar barrio o zona..." aria-label="Buscar barrio o zona">
-  </div>
-  <button class="nav-icon" aria-label="Ver cuadrícula">⊞</button>
-  <button class="nav-icon" aria-label="Configuración">⚙</button>
+<body class="bg-background font-body-md text-on-surface">
+<!-- TopNavBar -->
+<nav class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm dark:shadow-none sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-7xl mx-auto">
+<span class="text-headline-md font-headline-md font-extrabold text-primary dark:text-primary-fixed">Prevención Dengue</span>
+<div class="hidden md:flex items-center gap-md">
+<a class="text-on-surface-variant dark:text-surface-variant font-body-md font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="index.html">Inicio</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-body-md font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="mapa-riesgo.html">Mapa de Riesgo</a>
+<a class="text-primary dark:text-primary-fixed font-body-md font-bold border-b-2 border-primary dark:border-primary-fixed pb-1" href="reporte-riesgos.html">Reportar Riesgo</a>
+<button class="bg-error text-on-error px-6 py-2 rounded-full font-body-md font-bold hover:bg-error/90 active:opacity-80 active:scale-95 transition-all">Emergencia</button>
+</div>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
 </nav>
-
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <aside aria-label="Menú lateral">
-    <div class="sidebar-section" aria-hidden="true">Principal</div>
-    <a class="sidebar-item" href="index.html"><span aria-hidden="true">🏠</span> Inicio</a>
-    <a class="sidebar-item" href="mapa-riesgo.html"><span aria-hidden="true">🗺️</span> Mapa de riesgo</a>
-    <a class="sidebar-item active" href="reporte-riesgos.html" aria-current="page"><span aria-hidden="true">📋</span> Reporte de riesgos</a>
-    <div class="sidebar-section" aria-hidden="true">Información</div>
-    <a class="sidebar-item" href="#"><span aria-hidden="true">📚</span> Guía de prevención</a>
-    <a class="sidebar-item" href="#"><span aria-hidden="true">🏥</span> Centros de salud</a>
-    <a class="sidebar-item" href="#"><span aria-hidden="true">📊</span> Estadísticas</a>
-  </aside>
-
-  <main id="main-content">
-    <div class="form-card" role="main">
-
-      <!-- HEADER -->
-      <div class="form-header">
-        <h1>📋 Reportar foco de riesgo</h1>
-        <p>Ayuda a tu comunidad. Reporta criaderos de mosquitos, agua estancada u otros factores de riesgo en tu barrio.</p>
-      </div>
-      <div class="progress-bar" role="progressbar" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100" aria-label="Paso 2 de 3">
-        <div class="progress-fill"></div>
-      </div>
-
-      <!-- STEPS -->
-      <div class="steps" aria-label="Progreso del formulario">
-        <div class="step done"   aria-label="Paso 1 de ubicación completado">
-          <div class="step-num" aria-hidden="true">✓</div> Ubicación
-        </div>
-        <div class="step-line done" aria-hidden="true"></div>
-        <div class="step active" aria-label="Paso 2 de detalles activo" aria-current="step">
-          <div class="step-num" aria-hidden="true">2</div> Detalles
-        </div>
-        <div class="step-line" aria-hidden="true"></div>
-        <div class="step"        aria-label="Paso 3 de evidencia pendiente">
-          <div class="step-num" aria-hidden="true">3</div> Evidencia
-        </div>
-      </div>
-
-      <!-- BODY -->
-      <div class="form-body" id="report-form" novalidate>
-
-        <!-- Nombre y teléfono -->
-        <div class="field-row">
-          <div class="field-group">
-            <label for="nombre">
-              <span aria-hidden="true">👤</span> Nombre del reportante
-              <span class="required" aria-hidden="true">*</span>
-            </label>
-            <div class="input-wrap">
-              <span class="input-icon" aria-hidden="true">👤</span>
-              <input
-                id="nombre"
-                type="text"
-                placeholder="Ej. María García"
-                autocomplete="name"
-                required
-                aria-required="true"
-                aria-describedby="nombre-error"
-              >
-            </div>
-            <span id="nombre-error" class="field-error" role="alert">Por favor ingresa tu nombre.</span>
-          </div>
-
-          <div class="field-group">
-            <label for="telefono">
-              <span aria-hidden="true">📞</span> Teléfono de contacto
-            </label>
-            <div class="input-wrap">
-              <span class="input-icon" aria-hidden="true">📞</span>
-              <input
-                id="telefono"
-                type="tel"
-                placeholder="Ej. 300 123 4567"
-                autocomplete="tel"
-                pattern="[0-9\s\-\+\(\)]{7,15}"
-                aria-describedby="telefono-hint"
-              >
-            </div>
-            <span id="telefono-hint" style="font-size:0.73rem;color:var(--gris-texto)">Opcional. Formato: 300 123 4567</span>
-          </div>
-        </div>
-
-        <!-- Dirección -->
-        <div class="field-row full">
-          <div class="field-group">
-            <label for="direccion">
-              <span aria-hidden="true">📍</span> Dirección del foco
-              <span class="required" aria-hidden="true">*</span>
-            </label>
-            <div class="input-wrap">
-              <span class="input-icon" aria-hidden="true">📍</span>
-              <input
-                id="direccion"
-                type="text"
-                placeholder="Ej. Cra 46 #68-30, Barranquilla"
-                autocomplete="street-address"
-                required
-                aria-required="true"
-                aria-describedby="direccion-error"
-              >
-            </div>
-            <span id="direccion-error" class="field-error" role="alert">Por favor ingresa la dirección del foco.</span>
-          </div>
-        </div>
-
-        <!-- Tipo de foco y nivel de urgencia -->
-        <div class="field-row">
-          <div class="field-group">
-            <label for="tipo-foco">
-              <span aria-hidden="true">🦟</span> Tipo de foco
-              <span class="required" aria-hidden="true">*</span>
-            </label>
-            <select
-              id="tipo-foco"
-              class="no-icon"
-              required
-              aria-required="true"
-              aria-describedby="tipo-error"
-            >
-              <option value="" disabled selected>Selecciona una categoría</option>
-              <option value="recipiente">Recipiente con agua estancada</option>
-              <option value="lote">Lote baldío con charcas</option>
-              <option value="alcantarilla">Alcantarilla o desagüe tapado</option>
-              <option value="tanque">Tanque sin tapa</option>
-              <option value="llanta">Llanta o escombros con agua</option>
-              <option value="otro">Otro</option>
-            </select>
-            <span id="tipo-error" class="field-error" role="alert">Por favor selecciona el tipo de foco.</span>
-          </div>
-
-          <div class="field-group">
-            <label for="urgencia">
-              <span aria-hidden="true">⚠️</span> Nivel de urgencia
-              <span class="required" aria-hidden="true">*</span>
-            </label>
-            <select
-              id="urgencia"
-              class="no-icon"
-              required
-              aria-required="true"
-              aria-describedby="urgencia-error"
-            >
-              <option value="" disabled selected>Selecciona nivel</option>
-              <option value="critico">🔴 Crítico — Intervención inmediata</option>
-              <option value="alto">🟠 Alto — Atención esta semana</option>
-              <option value="medio">🟡 Medio — Seguimiento requerido</option>
-              <option value="bajo">🟢 Bajo — Monitoreo preventivo</option>
-            </select>
-            <span id="urgencia-error" class="field-error" role="alert">Por favor selecciona el nivel de urgencia.</span>
-          </div>
-        </div>
-
-        <!-- Descripción -->
-        <div class="field-row full">
-          <div class="field-group">
-            <label for="descripcion">
-              <span aria-hidden="true">📝</span> Descripción del problema
-              <span class="required" aria-hidden="true">*</span>
-            </label>
-            <textarea
-              id="descripcion"
-              placeholder="Describe con detalle qué observaste: tipo de recipiente, tamaño, presencia de larvas, condiciones del entorno..."
-              required
-              aria-required="true"
-              aria-describedby="descripcion-error"
-              minlength="20"
-            ></textarea>
-            <span id="descripcion-error" class="field-error" role="alert">Por favor describe el problema (mínimo 20 caracteres).</span>
-          </div>
-        </div>
-
-        <div class="divider" aria-hidden="true"></div>
-
-        <!-- Upload de fotos -->
-        <div class="field-row full">
-          <div class="field-group">
-            <label id="fotos-label">
-              <span aria-hidden="true">📷</span> Evidencia fotográfica
-              <span style="font-weight:400;color:var(--gris-texto)">(opcional)</span>
-            </label>
-            <div
-              class="upload-zone"
-              id="upload-zone"
-              role="button"
-              tabindex="0"
-              aria-labelledby="fotos-label"
-              aria-describedby="upload-hint"
-            >
-              <div class="upload-icon" aria-hidden="true">📷</div>
-              <div class="upload-title">Arrastra tus fotos aquí</div>
-              <div class="upload-sub" id="upload-hint">PNG, JPG o WEBP · Máximo 5 imágenes · 10 MB c/u</div>
-              <button type="button" class="upload-btn" id="upload-trigger">Seleccionar archivos</button>
-            </div>
-            <input
-              type="file"
-              id="file-input"
-              accept="image/png,image/jpeg,image/webp"
-              multiple
-              aria-label="Seleccionar fotos de evidencia"
-            >
-            <div class="upload-preview" id="upload-preview" aria-live="polite" aria-label="Fotos seleccionadas"></div>
-          </div>
-        </div>
-
-      </div><!-- /form-body -->
-
-      <!-- FOOTER -->
-      <div class="form-footer">
-        <a href="index.html" class="btn-cancel">← Cancelar</a>
-        <div class="btn-group">
-          <button type="button" class="btn-save"   id="btn-guardar">Guardar borrador</button>
-          <button type="button" class="btn-submit" id="btn-enviar">Enviar reporte ✓</button>
-        </div>
-      </div>
-
-    </div><!-- /form-card -->
-  </main>
+<main class="flex flex-col md:flex-row min-h-screen max-w-7xl mx-auto mt-gutter gap-gutter px-margin-mobile md:px-margin-desktop mb-xl">
+<!-- Left Sidebar (Informational/Guidance) -->
+<aside class="w-full md:w-1/4 flex flex-col gap-md">
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant">
+<h2 class="font-headline-md text-headline-md text-primary mb-4">¿Por qué reportar?</h2>
+<p class="text-body-md text-on-surface-variant leading-relaxed">
+                    Tu participación es fundamental para detener la propagación del Dengue. Al identificar posibles focos de cría o casos sospechosos, permites que las brigadas de salud actúen rápidamente en tu comunidad.
+                </p>
+<div class="mt-6 flex flex-col gap-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="verified">verified</span>
+<span class="text-label-md font-label-md">Acción rápida garantizada</span>
 </div>
-
-<!-- Toast de confirmación -->
-<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
-  ✅ ¡Reporte enviado con éxito! Gracias por contribuir.
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="location_on">location_on</span>
+<span class="text-label-md font-label-md">Geolocalización precisa</span>
 </div>
-
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="shield">shield</span>
+<span class="text-label-md font-label-md">Reporte 100% confidencial</span>
+</div>
+</div>
+</div>
+<!-- Urgent Notification Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-t-4 border-tertiary-container shadow-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-tertiary-container uppercase tracking-wider mb-2 text-sm">Protocolo de Salud</h3>
+<p class="text-body-md text-on-surface-variant italic">
+                    "Si presentas fiebre alta y dolor articular intenso, no te automediques. Acude al centro de salud más cercano."
+                </p>
+</div>
+</aside>
+<!-- Main Form Content -->
+<section class="flex-1">
+<div class="bg-surface-container-lowest p-gutter md:p-lg rounded-xl border border-outline-variant shadow-sm">
+<header class="mb-lg border-b border-outline-variant pb-6">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Formulario de Reporte</h1>
+<p class="text-body-lg text-on-surface-variant">Complete los datos para alertar sobre una zona de riesgo o caso sospechoso.</p>
+</header>
+<form class="flex flex-col gap-lg">
+<!-- Section 1: Identity/Category -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="tipo_reporte">Tipo de Riesgo</label>
+<select class="bg-surface border border-outline-variant rounded-lg p-3 font-body-md form-input-focus outline-none appearance-none" id="tipo_reporte">
+<option>Criadero de mosquitos</option>
+<option>Caso sospechoso (Síntomas)</option>
+<option>Fumigación requerida</option>
+<option>Otro</option>
+</select>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="gravedad">Nivel de Urgencia</label>
+<div class="flex items-center gap-sm mt-2">
+<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-label-md font-label-md cursor-pointer hover:opacity-80 transition-opacity">Baja</span>
+<span class="bg-secondary-fixed text-on-secondary-fixed px-3 py-1 rounded-full text-label-md font-label-md cursor-pointer border-2 border-secondary hover:opacity-80 transition-opacity">Media</span>
+<span class="bg-error-container text-on-error-container px-3 py-1 rounded-full text-label-md font-label-md cursor-pointer hover:opacity-80 transition-opacity">Alta</span>
+</div>
+</div>
+</div>
+<!-- Section 2: Description -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="descripcion">Descripción del Riesgo</label>
+<textarea class="bg-surface border border-outline-variant rounded-lg p-4 font-body-md form-input-focus outline-none resize-none" id="descripcion" placeholder="Describa brevemente lo observado (ej. acumulación de agua estancada, llantas abandonadas...)" rows="4"></textarea>
+</div>
+<!-- Section 3: Location -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="ubicacion">Ubicación exacta</label>
+<div class="relative">
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3 pr-10 font-body-md form-input-focus outline-none" id="ubicacion" placeholder="Calle, número, colonia o referencias visuales" type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-3 text-secondary" data-icon="my_location">my_location</span>
+</div>
+</div>
+<!-- Section 4: Map/Visual Placeholder -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant">Confirmación en Mapa</label>
+<div class="h-64 bg-surface-variant rounded-xl flex items-center justify-center overflow-hidden border border-outline-variant relative group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A detailed digital satellite map view of a metropolitan urban area with streets and buildings highlighted, featuring a subtle turquoise pinpoint marker indicating a specific location." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9Lb07ih8OPFuazy-5UnbQcCnKYIAjvZp82agUbI0JE7sXnwBEhBc71UmbKOa0gHajTXb8btzweneJF_yQogv2mK6yKTejLnZdJ2GWvV9np_nou8hwwWsEBL3A_v28gcn1lSs6JkEtYBCoUOhFqYwVsU6z3dJF7eJH1Ji7_JW-A_kZYz3dpQAZXlcR25_sR4cKz8U1udMhqYjnZxMWmNNQaoDTdts_a7R0B03GhBRhKZIleI7rxxWcuy2p5qiWVtk6o-ZScORUvxQ"/>
+<div class="absolute inset-0 bg-primary/10 flex items-center justify-center pointer-events-none">
+<span class="bg-surface-container-lowest px-4 py-2 rounded-full shadow-lg flex items-center gap-2 border border-primary">
+<span class="material-symbols-outlined text-primary" data-icon="pin_drop" style="font-variation-settings: 'FILL' 1;">pin_drop</span>
+<span class="text-label-md font-label-md text-on-surface">Ubicación Seleccionada</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex justify-end items-center gap-md pt-6 border-t border-outline-variant">
+<button class="text-secondary font-body-md font-bold hover:underline px-4 py-2" type="button">Cancelar</button>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-full font-body-md font-bold shadow-lg hover:shadow-primary/20 active:scale-95 transition-all" type="submit">Enviar Reporte</button>
+</div>
+</form>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-high dark:bg-surface-container-highest border-t border-outline-variant py-lg">
+<div class="flex flex-col md:flex-row justify-between items-center gap-md w-full px-margin-mobile md:px-margin-desktop py-lg max-w-7xl mx-auto">
+<div class="flex flex-col gap-2 text-center md:text-left">
+<span class="font-display-lg text-display-lg font-black text-primary">Prevención Dengue</span>
+<p class="text-body-md text-on-surface-variant max-w-sm">Sistema Nacional de Salud. Comprometidos con la vigilancia epidemiológica y comunitaria.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-md md:gap-lg">
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors" href="#">Sobre nosotros</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors" href="#">Contacto</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors" href="#">Recursos de Salud</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors" href="#">Privacidad</a>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop pt-md text-center md:text-left">
+<p class="text-label-md font-label-md text-on-surface-variant opacity-70">© 2024 Sistema Nacional de Salud. Vigilancia Epidemiológica del Dengue.</p>
+</div>
+</footer>
 <script>
-  /* ================================================
-     Validación del formulario
-     ================================================ */
-  const fields = [
-    { id: 'nombre',      errorId: 'nombre-error' },
-    { id: 'direccion',   errorId: 'direccion-error' },
-    { id: 'tipo-foco',   errorId: 'tipo-error' },
-    { id: 'urgencia',    errorId: 'urgencia-error' },
-    { id: 'descripcion', errorId: 'descripcion-error' },
-  ];
-
-  function validateField(el, errorEl) {
-    const valid = el.checkValidity();
-    el.classList.toggle('invalid', !valid);
-    errorEl.classList.toggle('visible', !valid);
-    return valid;
-  }
-
-  // Validación en tiempo real (al salir del campo)
-  fields.forEach(({ id, errorId }) => {
-    const el  = document.getElementById(id);
-    const err = document.getElementById(errorId);
-    el.addEventListener('blur', () => validateField(el, err));
-    el.addEventListener('input', () => {
-      if (el.classList.contains('invalid')) validateField(el, err);
-    });
-  });
-
-  // Envío del formulario
-  document.getElementById('btn-enviar').addEventListener('click', () => {
-    let valid = true;
-
-    fields.forEach(({ id, errorId }) => {
-      const el  = document.getElementById(id);
-      const err = document.getElementById(errorId);
-      if (!validateField(el, err)) valid = false;
-    });
-
-    if (!valid) {
-      // Llevar el foco al primer campo inválido
-      const first = document.querySelector('.invalid');
-      if (first) first.focus();
-      return;
-    }
-
-    // ---- Aquí iría el fetch/POST al backend ----
-    // Simulamos éxito:
-    showToast();
-  });
-
-  // Guardar borrador (demo)
-  document.getElementById('btn-guardar').addEventListener('click', () => {
-    showToast('💾 Borrador guardado correctamente.');
-  });
-
-  /* ================================================
-     Toast
-     ================================================ */
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    if (msg) toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
-  }
-
-  /* ================================================
-     Upload de imágenes
-     ================================================ */
-  const fileInput   = document.getElementById('file-input');
-  const uploadZone  = document.getElementById('upload-zone');
-  const uploadTrigger = document.getElementById('upload-trigger');
-  const preview     = document.getElementById('upload-preview');
-  const MAX_FILES   = 5;
-  const MAX_SIZE_MB = 10;
-
-  uploadTrigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    fileInput.click();
-  });
-
-  uploadZone.addEventListener('click', () => fileInput.click());
-
-  uploadZone.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') fileInput.click();
-  });
-
-  // Drag and drop
-  uploadZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadZone.style.borderColor = 'var(--turquesa)';
-  });
-
-  uploadZone.addEventListener('dragleave', () => {
-    uploadZone.style.borderColor = '';
-  });
-
-  uploadZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadZone.style.borderColor = '';
-    handleFiles(e.dataTransfer.files);
-  });
-
-  fileInput.addEventListener('change', () => handleFiles(fileInput.files));
-
-  function handleFiles(files) {
-    preview.innerHTML = '';
-    const selected = Array.from(files).slice(0, MAX_FILES);
-
-    selected.forEach(file => {
-      if (!file.type.startsWith('image/')) return;
-      if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-        alert(`"${file.name}" supera el límite de ${MAX_SIZE_MB} MB.`);
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        img.className = 'preview-thumb';
-        img.alt = `Vista previa: ${file.name}`;
-        preview.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-</script>
-
-</body>
-</html>
+        // Simple micro-interaction for form labels
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('focus', () => {
+                const label = el.previousElementSibling;
+                if (label && label.tagName === 'LABEL') {
+                    label.style.color = '#006a60';
+                    label.style.fontWeight = '700';
+                }
+            });
+            el.addEventListener('blur', () => {
+                const label = el.previousElementSibling;
+                if (label && label.tagName === 'LABEL') {
+                    label.style.color = '';
+                    label.style.fontWeight = '';
+                }
+            });
+        });
+    </script>
+</body></html>
