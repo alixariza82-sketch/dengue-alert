@@ -1,0 +1,246 @@
+/* =============================================
+   DengueAlert — Global Styles
+   Variables, reset, nav, sidebar, shared utils
+   ============================================= */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500&display=swap');
+
+/* ---- Variables ---- */
+:root {
+  --turquesa:       #19B5A5;
+  --azul:           #145DA0;
+  --amarillo:       #F4C542;
+  --blanco:         #FFFFFF;
+  --turquesa-light: #e8f8f7;
+  --azul-dark:      #0e3f6e;
+  --gris-bg:        #f4f7fb;
+  --gris-texto:     #5a6475;
+  --sombra:         0 4px 24px rgba(20, 93, 160, 0.10);
+  --sombra-hover:   0 8px 32px rgba(20, 93, 160, 0.18);
+  --radio:          14px;
+  --rojo:           #e74c3c;
+  --naranja:        #e67e22;
+  --verde:          #27ae60;
+}
+
+/* ---- Reset ---- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ---- Base ---- */
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--gris-bg);
+  color: #1e2b3a;
+}
+
+/* ---- Layout ---- */
+.layout {
+  display: flex;
+  flex: 1;
+}
+
+/* =============================================
+   NAV
+   ============================================= */
+nav {
+  background: var(--azul-dark);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 28px;
+  height: 54px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
+}
+
+.nav-logo {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--amarillo);
+  margin-right: auto;
+  text-decoration: none;
+}
+
+.nav-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.nav-dot.active {
+  background: var(--turquesa);
+  border-color: var(--turquesa);
+}
+
+.nav-search {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 6px 14px;
+  gap: 8px;
+  width: 340px;
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.nav-search input {
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  width: 100%;
+  font-size: 0.85rem;
+}
+
+.nav-search input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.nav-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.nav-icon:hover {
+  background: var(--turquesa);
+}
+
+/* =============================================
+   SIDEBAR
+   ============================================= */
+aside {
+  width: 210px;
+  min-width: 210px;
+  background: var(--blanco);
+  border-right: 1px solid #e3eaf3;
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.sidebar-section {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--gris-texto);
+  margin: 14px 0 6px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: #3a4a5c;
+  font-weight: 500;
+  transition: background 0.18s, color 0.18s;
+  text-decoration: none;
+}
+
+.sidebar-item:hover {
+  background: var(--turquesa-light);
+  color: var(--turquesa);
+}
+
+.sidebar-item.active {
+  background: linear-gradient(135deg, var(--turquesa), var(--azul));
+  color: #fff;
+  font-weight: 600;
+}
+
+.sidebar-alert {
+  margin-top: auto;
+  background: #fff8e6;
+  border: 1px solid #f4c542;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.78rem;
+  color: #5a4200;
+  line-height: 1.5;
+}
+
+/* =============================================
+   SHARED CARD / PANEL
+   ============================================= */
+.card {
+  background: #fff;
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+}
+
+.panel {
+  background: #fff;
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 13px 16px 10px;
+  border-bottom: 1px solid #eef2f7;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--azul);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-body {
+  padding: 14px 16px;
+}
+
+/* =============================================
+   SHARED BADGES
+   ============================================= */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: 'Sora', sans-serif;
+}
+
+.badge-alto   { background: #fdecea; color: var(--rojo); }
+.badge-medio  { background: #fef0e6; color: var(--naranja); }
+.badge-bajo   { background: #eafaf1; color: var(--verde); }
+
+/* =============================================
+   RESPONSIVE — NAV / SIDEBAR
+   ============================================= */
+@media (max-width: 768px) {
+  .nav-search {
+    width: 160px;
+  }
+
+  aside {
+    display: none; /* simplificado para mobile — se puede reemplazar por menú hamburguesa */
+  }
+}
