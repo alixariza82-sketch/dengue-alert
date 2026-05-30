@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mapa de Riesgo - Prevención Dengue</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&amp;family=Open+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .map-gradient-overlay {
+            background: linear-gradient(to bottom, rgba(247, 249, 251, 0) 0%, rgba(247, 249, 251, 0.8) 100%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eceef0",
+                        "primary": "#006a60",
+                        "on-primary-fixed": "#00201c",
+                        "error-container": "#ffdad6",
+                        "secondary": "#1a60a3",
+                        "on-primary-fixed-variant": "#005048",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary-container": "#7db6ff",
+                        "secondary-fixed": "#d3e4ff",
+                        "tertiary-fixed": "#ffdf94",
+                        "tertiary-container": "#c79c16",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "outline": "#6c7a77",
+                        "on-tertiary-container": "#483600",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "primary-fixed-dim": "#54dbca",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#00477f",
+                        "surface-tint": "#006a60",
+                        "on-surface-variant": "#3c4947",
+                        "primary-fixed": "#74f8e6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary-container": "#19b5a5",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-fixed": "#241a00",
+                        "inverse-surface": "#2d3133",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#a2c9ff",
+                        "outline-variant": "#bbcac6",
+                        "on-secondary-fixed-variant": "#004882",
+                        "on-primary-container": "#00403a",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-bright": "#f7f9fb",
+                        "on-surface": "#191c1e",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary-fixed": "#001c38",
+                        "inverse-primary": "#54dbca",
+                        "surface-container-high": "#e6e8ea",
+                        "tertiary-fixed-dim": "#efc13e",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary": "#765b00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "md": "24px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "xl": "80px",
+                        "sm": "12px",
+                        "lg": "48px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Montserrat"],
+                        "label-md": ["Open Sans"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "body-md": ["Open Sans"],
+                        "body-lg": ["Open Sans"],
+                        "headline-md": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-outline-variant shadow-sm z-50 sticky top-0">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="text-headline-md font-headline-md font-extrabold text-primary">Prevención Dengue</span>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex gap-lg items-center">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="index.html">Inicio</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md" href="mapa-riesgo.html">Mapa de Riesgo</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="reportar-riesgo.html">Reportar Riesgo</a>
+</nav>
+<div class="flex items-center gap-sm">
+
+</div>
+</div>
+</header>
+<main class="flex-grow flex flex-col md:flex-row max-w-[1920px] mx-auto w-full">
+<!-- Sidebar Navigation -->
+<aside class="hidden md:flex flex-col w-72 bg-surface-container-low border-r border-outline-variant p-6 gap-lg">
+<div class="space-y-4">
+<div class="flex items-center gap-3 p-3 bg-primary-container/20 text-on-primary-container rounded-lg border border-primary/20">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<span class="font-label-md text-label-md">Visualización de Datos</span>
+</div>
+<div class="flex flex-col gap-2">
+<p class="font-label-md text-label-md text-on-surface-variant px-3 uppercase tracking-wider text-[10px]">Filtrar por</p>
+<button class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+<span class="material-symbols-outlined">distance</span>
+<span class="font-label-md text-label-md">Radio de Proximidad</span>
+</button>
+<button class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">Historial 30 días</span>
+</button>
+<button class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">
+<span class="material-symbols-outlined">water_drop</span>
+<span class="font-label-md text-label-md">Criaderos Reportados</span>
+</button>
+</div>
+</div>
+<div class="mt-auto p-4 bg-tertiary-container/10 border-l-4 border-tertiary rounded-r-lg">
+<p class="font-label-md text-label-md text-on-tertiary-container font-bold mb-1">Nota de Seguridad</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">Los datos mostrados se actualizan cada 24 horas mediante vigilancia epidemiológica oficial.</p>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-grow p-margin-mobile md:p-8 flex flex-col gap-6 overflow-hidden">
+<!-- Header Info Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+<div>
+<h1 class="font-headline-md text-headline-md text-on-surface">Vigilancia en Tiempo Real</h1>
+<p class="text-body-md text-on-surface-variant">Análisis territorial de focos infecciosos y zonas de calor.</p>
+</div>
+<div class="flex items-center gap-3 bg-surface p-2 rounded-lg border border-outline-variant">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 md:w-64 font-body-md" placeholder="Buscar zona o municipio..." type="text"/>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+<!-- Large Central Map Visualization -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<div class="relative bg-surface-container-high rounded-xl border border-outline-variant overflow-hidden h-[500px] lg:h-full flex items-center justify-center">
+<img alt="Mapa interactivo" class="absolute inset-0 w-full h-full object-cover opacity-80" data-alt="A professional satellite view of a metropolitan city layout with overlaid interactive digital heat maps showing glowing turquoise and yellow zones. The visual style is high-tech health surveillance dashboard, featuring a clean interface and data overlays. Lighting is bright, simulating a modern clinical command center aesthetic with vibrant health-related data visualizations." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCB7yqdVP2kjMBh6kFr6-U0M65Wl51p50JUZXYvB84292UdEtOaI22m5bzrczDZUF0LkwTOZSlEbLOheciyZRsCKkwurY3ef6p-OU9XrjJXjub_a_zLzTCQddo37d9IlBhgs0TfJ-6eRJ8FSLDgkCOJ7qqcHpClDMnjKKE-mrKbJlAEtYjVBlFJVTwPc55vn69XWc5VDpmmbqQpP86AwMX_6GDnNXnWaZSytKroCl9UpP5Jm3D-QZ8OcJw7H3xEuiWIKk1g6a1Tjs"/>
+<!-- Map Controls Floating -->
+<div class="absolute top-4 right-4 flex flex-col gap-2">
+<button class="bg-surface-container-lowest p-2 rounded-lg shadow-md hover:bg-surface-variant transition-colors border border-outline-variant">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="bg-surface-container-lowest p-2 rounded-lg shadow-md hover:bg-surface-variant transition-colors border border-outline-variant">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<button class="bg-surface-container-lowest p-2 rounded-lg shadow-md hover:bg-surface-variant transition-colors border border-outline-variant">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+<!-- Legend Overlay -->
+<div class="absolute bottom-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md p-4 rounded-lg border border-outline-variant shadow-lg max-w-xs">
+<h4 class="font-label-md text-label-md mb-2">Nivel de Riesgo</h4>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-error"></div>
+<span class="text-xs text-on-surface-variant font-body-md">Crítico (Brote activo)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-tertiary"></div>
+<span class="text-xs text-on-surface-variant font-body-md">Medio (Focos detectados)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-xs text-on-surface-variant font-body-md">Bajo (Bajo control)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side Info Cards -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Stats Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-md text-headline-md text-primary">Resumen Local</h3>
+<span class="material-symbols-outlined text-outline">trending_up</span>
+</div>
+<div class="space-y-4">
+<div class="p-4 rounded-lg bg-surface border border-outline-variant">
+<p class="text-xs text-on-surface-variant uppercase font-bold tracking-tight font-label-md">Casos Confirmados</p>
+<p class="text-3xl font-black text-on-surface mt-1 font-headline-md">1,240</p>
+<div class="flex items-center gap-1 mt-2 text-error text-xs font-bold font-label-md">
+<span class="material-symbols-outlined text-sm">arrow_upward</span>
+<span>+12% vs mes anterior</span>
+</div>
+</div>
+<div class="p-4 rounded-lg bg-surface border border-outline-variant">
+<p class="text-xs text-on-surface-variant uppercase font-bold tracking-tight font-label-md">Zonas de Fumigación</p>
+<p class="text-3xl font-black text-on-surface mt-1 font-headline-md">18</p>
+<div class="w-full bg-surface-container h-2 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 65%"></div>
+</div>
+<p class="text-[10px] text-on-surface-variant mt-1 text-right font-body-md">65% Meta semanal alcanzada</p>
+</div>
+</div>
+</div>
+<!-- Alerts Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-t-4 border-tertiary border-outline-variant shadow-sm">
+<h3 class="font-label-md text-label-md text-tertiary flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined">warning</span>
+                            Alertas Recientes
+                        </h3>
+<div class="space-y-3">
+<div class="flex gap-3">
+<div class="w-2 h-2 rounded-full bg-error mt-1.5 flex-shrink-0"></div>
+<div>
+<p class="text-sm font-bold text-on-surface font-label-md">Brote detectado en Sector 4</p>
+<p class="text-xs text-on-surface-variant font-body-md">Hace 2 horas - Requiere intervención inmediata.</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary mt-1.5 flex-shrink-0"></div>
+<div>
+<p class="text-sm font-bold text-on-surface font-label-md">Condiciones climáticas de riesgo</p>
+<p class="text-xs text-on-surface-variant font-body-md">Pronóstico de lluvias intensas en 24h.</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 border-2 border-secondary text-secondary font-bold rounded-lg hover:bg-secondary/5 transition-colors text-label-md font-label-md">
+                            Ver historial completo
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-high border-t border-outline-variant mt-xl">
+<div class="flex flex-col md:flex-row justify-between items-center gap-md w-full px-margin-mobile md:px-margin-desktop py-lg max-w-7xl mx-auto">
+<div class="flex flex-col gap-2">
+<span class="font-display-lg text-display-lg font-black text-primary">Prevención</span>
+<p class="body-md text-body-md text-on-surface-variant max-w-sm">Sistema Nacional de Vigilancia Epidemiológica coordinado por el Ministerio de Salud.</p>
+</div>
+<div class="grid grid-cols-2 md:flex md:gap-lg gap-4">
+<div class="flex flex-col gap-2">
+<p class="font-label-md text-label-md font-bold text-on-surface">Recursos</p>
+<a class="text-on-surface-variant hover:text-secondary transition-colors text-label-md font-label-md" href="#">Sobre nosotros</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors text-label-md font-label-md" href="#">Contacto</a>
+</div>
+<div class="flex flex-col gap-2">
+<p class="font-label-md text-label-md font-bold text-on-surface">Legal</p>
+<a class="text-on-surface-variant hover:text-secondary transition-colors text-label-md font-label-md" href="#">Privacidad</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors text-label-md font-label-md" href="#">Condiciones</a>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-6 border-t border-outline-variant/30 text-center md:text-left">
+<p class="body-md text-body-md text-on-surface-variant opacity-70 italic">© 2024 Sistema Nacional de Salud. Vigilancia Epidemiológica del Dengue.</p>
+</div>
+</footer>
+<!-- FAB for mobile reporting -->
+<button class="md:hidden fixed bottom-6 right-6 bg-primary text-on-primary w-14 h-14 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add_alert</span>
+</button>
+</body></html>
